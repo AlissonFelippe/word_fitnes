@@ -489,9 +489,6 @@
     </div>
   </div>
 
-  <!-- MOTOR DO SITE REAL EM FLUTTER (Carrega por baixo da animação) -->
-  <script src="flutter_bootstrap.js" async></script>
-
   <!-- SCRIPT DE SINCRONIZAÇÃO COM O PRIMEIRO FRAME DO FLUTTER -->
   <script>
     const splashOverlay = document.getElementById('splashOverlay');
@@ -506,6 +503,14 @@
         splashOverlay.classList.add('fade-out');
       }
     }
+
+    // Atrasa o início do motor do Flutter em 1.4s para a entrada da logo rodar lisa
+    setTimeout(() => {
+      const script = document.createElement('script');
+      script.src = 'flutter_bootstrap.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }, 1400);
 
     // 1. Ouve o evento oficial do Flutter quando a primeira tela real aparece por baixo
     window.addEventListener('flutter-first-frame', () => {
