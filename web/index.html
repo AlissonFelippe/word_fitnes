@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Academia World Fitness - Transforme seu corpo e sua mente.">
 
   <!-- iOS meta tags & icons -->
@@ -18,8 +19,521 @@
 
   <title>World Fitness | Academia</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Fonte da animação -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* Tela de sobreposição (Splash/Overlay) aguardando o primeiro frame do Flutter */
+    .splash-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-family: 'Montserrat', sans-serif;
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        background: rgba(9, 11, 20, 0.35);
+    }
+
+    /* Disparado via JS apenas quando flutter-first-frame ocorrer + tempo mínimo */
+    .splash-overlay.fade-out {
+        animation: seqOverlayFade 1.4s ease-in-out forwards;
+    }
+
+    @keyframes seqOverlayFade {
+        0% {
+            opacity: 1;
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            background: rgba(9, 11, 20, 0.35);
+            visibility: visible;
+        }
+        99% {
+            opacity: 0;
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            background: rgba(9, 11, 20, 0);
+            visibility: visible;
+        }
+        100% {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    }
+
+    /* Container principal da logo */
+    .logo-stage {
+        position: relative;
+        width: min(88vw, 560px);
+        height: min(88vw, 560px);
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.75));
+        transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.1s ease-in-out;
+    }
+
+    /* Recolhe suavemente a logo junto com o fade-out do overlay */
+    .splash-overlay.fade-out .logo-stage {
+        transform: scale(0.72);
+        opacity: 0;
+    }
+
+    .logo-stage svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+    }
+
+    /* =====================================================================
+       ANIMAÇÃO DE ENTRADA (1.8s) + PERMANÊNCIA ATÉ O FLUTTER CARREGAR
+       ===================================================================== */
+
+    /* 1. Círculo externo translúcido */
+    .outer-glass-ring {
+        transform-origin: 300px 300px;
+        opacity: 0;
+        animation: enterOuterRing 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes enterOuterRing {
+        0% { opacity: 0; transform: scale(0.35) rotate(-55deg); }
+        100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    /* 2. Anel oval principal (Vermelho & Azul) */
+    .main-oval-group {
+        transform-origin: 300px 300px;
+        opacity: 0;
+        animation: enterMainOval 1.1s cubic-bezier(0.34, 1.35, 0.64, 1) 0.2s forwards;
+    }
+
+    @keyframes enterMainOval {
+        0% { opacity: 0; transform: scale(0.15); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* 3. Globo central e linhas de grade */
+    .globe-core {
+        transform-origin: 300px 300px;
+        opacity: 0;
+        animation: enterGlobeCore 1.0s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+    }
+
+    @keyframes enterGlobeCore {
+        0% { opacity: 0; transform: scale(0); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    .globe-grid-line {
+        stroke-dasharray: 600;
+        stroke-dashoffset: 600;
+        animation: drawGrid 1.1s ease-in-out 0.55s forwards;
+    }
+
+    @keyframes drawGrid {
+        0% { stroke-dashoffset: 600; opacity: 0; }
+        100% { stroke-dashoffset: 0; opacity: 0.9; }
+    }
+
+    /* 4. Atletas estilizados */
+    .athlete-left {
+        transform-origin: 245px 300px;
+        opacity: 0;
+        animation: enterAthleteLeft 0.9s cubic-bezier(0.34, 1.3, 0.64, 1) 0.75s forwards;
+    }
+
+    @keyframes enterAthleteLeft {
+        0% { opacity: 0; transform: translateX(-55px) scale(0.5); }
+        100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    .athlete-right {
+        transform-origin: 355px 300px;
+        opacity: 0;
+        animation: enterAthleteRight 0.9s cubic-bezier(0.34, 1.3, 0.64, 1) 0.85s forwards;
+    }
+
+    @keyframes enterAthleteRight {
+        0% { opacity: 0; transform: translateX(55px) scale(0.5); }
+        100% { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    /* 5. Textos WORLD & FITNESS */
+    .brand-text-top {
+        transform-origin: 300px 130px;
+        opacity: 0;
+        animation: enterTextTop 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.95s forwards;
+    }
+
+    @keyframes enterTextTop {
+        0% { opacity: 0; transform: translateY(-28px) scale(0.8); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .brand-text-bottom {
+        transform-origin: 300px 475px;
+        opacity: 0;
+        animation: enterTextBottom 0.8s cubic-bezier(0.22, 1, 0.36, 1) 1.05s forwards;
+    }
+
+    @keyframes enterTextBottom {
+        0% { opacity: 0; transform: translateY(28px) scale(0.8); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* 6. Estrelas laterais */
+    .star-item {
+        transform-box: fill-box;
+        transform-origin: center;
+        opacity: 0;
+        animation: enterStarPop 0.7s cubic-bezier(0.34, 1.4, 0.64, 1) 1.15s forwards;
+    }
+
+    @keyframes enterStarPop {
+        0% { opacity: 0; transform: scale(0) rotate(-90deg); }
+        100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    /* 7. Reflexo metálico (Sheen) contínuo enquanto aguarda */
+    .sheen-sweep {
+        opacity: 0;
+        animation: loopSheenPass 2.6s ease-in-out 1.6s infinite;
+    }
+
+    @keyframes loopSheenPass {
+        0% { transform: translateX(-650px) skewX(-25deg); opacity: 0; }
+        15% { opacity: 0.7; }
+        55% { transform: translateX(650px) skewX(-25deg); opacity: 0.7; }
+        70%, 100% { transform: translateX(650px) skewX(-25deg); opacity: 0; }
+    }
+
+    /* 8. Brilhos nas bordas (Lens Flares) */
+    .lens-flare {
+        transform-box: fill-box;
+        transform-origin: center;
+        opacity: 0;
+        animation: pulseFlare 2.2s ease-in-out 1.5s infinite alternate;
+    }
+
+    @keyframes pulseFlare {
+        0% { opacity: 0.4; transform: scale(0.75); }
+        100% { opacity: 1; transform: scale(1.15); }
+    }
+
+    /* 9. Flutuação suave contínua */
+    .idle-float {
+        transform-origin: 300px 300px;
+        animation: loopFloat 2.8s ease-in-out 1.7s infinite alternate;
+    }
+
+    @keyframes loopFloat {
+        0% { transform: translateY(0px); }
+        100% { transform: translateY(-7px); }
+    }
+  </style>
 </head>
-<body style="background-color: #0D1117;">
+<body style="background-color: #0B0F19;">
+
+  <!-- SOBREPOSIÇÃO DA ANIMAÇÃO (SPLASH OVERLAY) -->
+  <div class="splash-overlay" id="splashOverlay">
+    <!-- Palco da Logo -->
+    <div class="logo-stage" id="logoContainer">
+      <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" id="worldFitnessSvg">
+        <defs>
+          <!-- Gradiente do círculo externo de vidro -->
+          <linearGradient id="glassRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ef4444" stop-opacity="0.35" />
+            <stop offset="50%" stop-color="#1e293b" stop-opacity="0.2" />
+            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.4" />
+          </linearGradient>
+
+          <!-- Borda luminosa do círculo externo -->
+          <linearGradient id="glassBorderGrad" x1="0%" y1="20%" x2="100%" y2="80%">
+            <stop offset="0%" stop-color="#fca5a5" stop-opacity="0.9" />
+            <stop offset="45%" stop-color="#ffffff" stop-opacity="0.25" />
+            <stop offset="100%" stop-color="#93c5fd" stop-opacity="0.95" />
+          </linearGradient>
+
+          <!-- Gradiente Vermelho Metálico (Metade Superior) -->
+          <linearGradient id="redMetalGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#991b1b" />
+            <stop offset="35%" stop-color="#dc2626" />
+            <stop offset="70%" stop-color="#ef4444" />
+            <stop offset="100%" stop-color="#b91c1c" />
+          </linearGradient>
+
+          <!-- Gradiente Azul Marinho Metálico (Metade Inferior) -->
+          <linearGradient id="blueMetalGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#172554" />
+            <stop offset="40%" stop-color="#1e3a8a" />
+            <stop offset="80%" stop-color="#1d4ed8" />
+            <stop offset="100%" stop-color="#0f172a" />
+          </linearGradient>
+
+          <!-- Gradiente Prateado do Globo -->
+          <radialGradient id="globeSilverGrad" cx="45%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#f8fafc" />
+            <stop offset="45%" stop-color="#cbd5e1" />
+            <stop offset="80%" stop-color="#94a3b8" />
+            <stop offset="100%" stop-color="#64748b" />
+          </radialGradient>
+
+          <!-- Sombra interna suave -->
+          <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.55" />
+          </filter>
+
+          <filter id="textShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.65" />
+          </filter>
+
+          <!-- Brilho Lens Flare -->
+          <radialGradient id="blueFlare" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+            <stop offset="25%" stop-color="#60a5fa" stop-opacity="0.9" />
+            <stop offset="60%" stop-color="#2563eb" stop-opacity="0.3" />
+            <stop offset="100%" stop-color="#2563eb" stop-opacity="0" />
+          </radialGradient>
+
+          <radialGradient id="redFlare" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+            <stop offset="25%" stop-color="#f87171" stop-opacity="0.9" />
+            <stop offset="60%" stop-color="#dc2626" stop-opacity="0.3" />
+            <stop offset="100%" stop-color="#dc2626" stop-opacity="0" />
+          </radialGradient>
+
+          <!-- Recortes para metade superior e inferior do oval -->
+          <clipPath id="topHalfClip">
+            <rect x="0" y="0" width="600" height="300" />
+          </clipPath>
+          <clipPath id="bottomHalfClip">
+            <rect x="0" y="300" width="600" height="300" />
+          </clipPath>
+
+          <!-- Recorte do globo interno -->
+          <clipPath id="globeClip">
+            <ellipse cx="300" cy="300" rx="188" ry="132" />
+          </clipPath>
+
+          <!-- Recorte do oval externo para o reflexo -->
+          <clipPath id="outerOvalClip">
+            <ellipse cx="300" cy="300" rx="272" ry="204" />
+          </clipPath>
+
+          <!-- Caminhos curvados para os textos WORLD e FITNESS -->
+          <path id="worldTextArc" d="M 165,205 A 165,120 0 0,1 435,205" />
+          <path id="fitnessTextArc" d="M 122,350 A 192,155 0 0,0 478,350" />
+        </defs>
+
+        <!-- Grupo com flutuação suave -->
+        <g class="idle-float">
+
+          <!-- 1. CÍRCULO EXTERNO TRANSLÚCIDO (GLASSMORPHISM) -->
+          <g class="outer-glass-ring">
+            <circle cx="300" cy="300" r="284" fill="url(#glassRingGrad)" stroke="url(#glassBorderGrad)" stroke-width="2.5" />
+            <circle cx="300" cy="300" r="279" fill="none" stroke="#ffffff" stroke-opacity="0.15" stroke-width="1" />
+          </g>
+
+          <!-- 2. ANEL OVAL PRINCIPAL BIPARTIDO -->
+          <g class="main-oval-group" filter="url(#dropShadow)">
+            <!-- Borda branca externa -->
+            <ellipse cx="300" cy="300" rx="274" ry="206" fill="#f8fafc" />
+            <ellipse cx="300" cy="300" rx="269" ry="201" fill="#1e293b" />
+
+            <!-- Metade Superior Vermelha -->
+            <ellipse cx="300" cy="300" rx="267" ry="199" fill="url(#redMetalGrad)" clip-path="url(#topHalfClip)" />
+            
+            <!-- Metade Inferior Azul -->
+            <ellipse cx="300" cy="300" rx="267" ry="199" fill="url(#blueMetalGrad)" clip-path="url(#bottomHalfClip)" />
+
+            <!-- Linha sutil de junção no horizonte -->
+            <line x1="33" y1="300" x2="567" y2="300" stroke="#ffffff" stroke-opacity="0.22" stroke-width="1.2" />
+
+            <!-- Brilho interno superior do anel -->
+            <ellipse cx="300" cy="300" rx="263" ry="195" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="1.5" />
+          </g>
+
+          <!-- 3. GLOBO CENTRAL COM GRADE DE MERIDIANOS E PARALELOS -->
+          <g class="globe-core">
+            <!-- Aro branco do globo -->
+            <ellipse cx="300" cy="300" rx="194" ry="138" fill="#ffffff" filter="url(#dropShadow)" />
+            
+            <!-- Fundo prateado do globo -->
+            <ellipse cx="300" cy="300" rx="188" ry="132" fill="url(#globeSilverGrad)" />
+
+            <!-- Linhas de Latitude e Longitude dentro do recorte -->
+            <g clip-path="url(#globeClip)" fill="none" stroke="#1e3a8a" stroke-width="4.2" stroke-linecap="round">
+              <!-- Paralelos (Horizontais) -->
+              <path class="globe-grid-line" d="M 100,218 Q 300,232 500,218" />
+              <path class="globe-grid-line" d="M 95,258 Q 300,268 505,258" />
+              <line class="globe-grid-line" x1="95" y1="300" x2="505" y2="300" />
+              <path class="globe-grid-line" d="M 95,342 Q 300,332 505,342" />
+              <path class="globe-grid-line" d="M 100,382 Q 300,368 500,382" />
+
+              <!-- Meridianos (Verticais) -->
+              <line class="globe-grid-line" x1="300" y1="160" x2="300" y2="440" />
+              <path class="globe-grid-line" d="M 255,162 Q 225,300 255,438" />
+              <path class="globe-grid-line" d="M 205,172 Q 152,300 205,428" />
+              <path class="globe-grid-line" d="M 345,162 Q 375,300 345,438" />
+              <path class="globe-grid-line" d="M 395,172 Q 448,300 395,428" />
+            </g>
+
+            <!-- Sombra interna sutil na borda do globo -->
+            <ellipse cx="300" cy="300" rx="188" ry="132" fill="none" stroke="#0f172a" stroke-opacity="0.25" stroke-width="3" />
+          </g>
+
+          <!-- 4. FIGURAS ESTILIZADAS DOS ATLETAS -->
+          <!-- Atleta Esquerdo -->
+          <g class="athlete-left" filter="url(#dropShadow)">
+            <ellipse cx="229" cy="246" rx="8.5" ry="12" transform="rotate(-12 229 246)" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" />
+            <path d="M 232,188 
+                     C 212,218 208,262 226,292 
+                     C 242,318 278,342 293,388 
+                     C 286,350 264,316 240,290 
+                     C 220,266 218,224 232,188 Z" 
+                  fill="#1e3a8a" stroke="#ffffff" stroke-width="2.8" stroke-linejoin="round" />
+            <path d="M 212,262 
+                     C 202,272 216,288 242,288 
+                     C 264,288 278,278 286,268 
+                     C 272,275 256,278 238,275 
+                     C 222,272 216,266 212,262 Z" 
+                  fill="#dc2626" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round" />
+            <path d="M 233,286 
+                     C 244,312 240,336 225,342 
+                     C 210,348 195,332 186,315 
+                     C 192,338 212,358 232,352 
+                     C 250,346 254,316 244,288 Z" 
+                  fill="#dc2626" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round" />
+          </g>
+
+          <!-- Atleta Direito -->
+          <g class="athlete-right" filter="url(#dropShadow)">
+            <ellipse cx="394" cy="264" rx="9" ry="11.5" transform="rotate(15 394 264)" fill="#1e3a8a" stroke="#ffffff" stroke-width="2.5" />
+            <path d="M 332,202 
+                     C 362,226 382,258 372,285 
+                     C 362,308 326,312 292,302 
+                     C 324,322 366,320 382,292 
+                     C 394,268 374,230 332,202 Z" 
+                  fill="#1e3a8a" stroke="#ffffff" stroke-width="2.8" stroke-linejoin="round" />
+            <path d="M 314,242 
+                     C 334,268 362,288 386,286 
+                     C 402,284 408,274 404,266 
+                     C 400,274 392,276 378,274 
+                     C 356,270 334,256 314,242 Z" 
+                  fill="#dc2626" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round" />
+            <path d="M 366,286 
+                     C 368,314 378,346 396,374 
+                     C 386,342 380,312 378,286 Z" 
+                  fill="#dc2626" stroke="#ffffff" stroke-width="2.5" stroke-linejoin="round" />
+          </g>
+
+          <!-- 5. TEXTOS CURVADOS: "WORLD" (TOPO) E "FITNESS" (BASE) -->
+          <g class="brand-text-top" filter="url(#textShadow)">
+            <text font-family="'Montserrat', sans-serif" font-weight="900" font-size="47" letter-spacing="4" fill="#172554" stroke="#ffffff" stroke-width="2.6" paint-order="stroke fill">
+              <textPath href="#worldTextArc" startOffset="50%" text-anchor="middle">WORLD</textPath>
+            </text>
+          </g>
+
+          <g class="brand-text-bottom" filter="url(#textShadow)">
+            <text font-family="'Montserrat', sans-serif" font-weight="900" font-size="54" letter-spacing="4.5" fill="#dc2626" stroke="#ffffff" stroke-width="3" paint-order="stroke fill">
+              <textPath href="#fitnessTextArc" startOffset="50%" text-anchor="middle">FITNESS</textPath>
+            </text>
+          </g>
+
+          <!-- 6. AS 6 ESTRELAS BRANCAS LATERAIS -->
+          <g filter="url(#dropShadow)" fill="#ffffff">
+            <!-- Lado Esquerdo -->
+            <polygon class="star-item" points="118,176 123,190 138,190 126,199 131,213 118,204 105,213 110,199 98,190 113,190" />
+            <polygon class="star-item" points="86,242 91,256 106,256 94,265 99,279 86,270 73,279 78,265 66,256 81,256" />
+            <polygon class="star-item" points="95,314 100,328 115,328 103,337 108,351 95,342 82,351 87,337 75,328 90,328" />
+
+            <!-- Lado Direito -->
+            <polygon class="star-item" points="482,176 487,190 502,190 490,199 495,213 482,204 469,213 474,199 462,190 477,190" />
+            <polygon class="star-item" points="514,242 519,256 534,256 522,265 527,279 514,270 501,279 506,265 494,256 509,256" />
+            <polygon class="star-item" points="505,314 510,328 525,328 513,337 518,351 505,342 492,351 497,337 485,328 500,328" />
+          </g>
+
+          <!-- 7. REFLEXO METÁLICO QUE ATRAVESSA A LOGO -->
+          <g clip-path="url(#outerOvalClip)" pointer-events="none">
+            <rect class="sheen-sweep" x="0" y="80" width="95" height="440" fill="url(#glassBorderGrad)" opacity="0.55" />
+          </g>
+
+          <!-- 8. BRILHOS DE LENTE (LENS FLARES) NAS BORDAS -->
+          <g class="lens-flare flare-blue-top">
+            <circle cx="565" cy="200" r="34" fill="url(#blueFlare)" />
+            <ellipse cx="565" cy="200" rx="52" ry="2.5" fill="#ffffff" opacity="0.9" />
+            <ellipse cx="565" cy="200" rx="2.5" ry="32" fill="#ffffff" opacity="0.9" />
+          </g>
+
+          <g class="lens-flare flare-blue-bottom">
+            <circle cx="468" cy="528" r="28" fill="url(#blueFlare)" />
+            <ellipse cx="468" cy="528" rx="44" ry="2" fill="#ffffff" opacity="0.85" />
+            <ellipse cx="468" cy="528" rx="2" ry="28" fill="#ffffff" opacity="0.85" />
+          </g>
+
+          <g class="lens-flare flare-red">
+            <circle cx="170" cy="548" r="24" fill="url(#redFlare)" />
+            <ellipse cx="170" cy="548" rx="38" ry="2" fill="#ffffff" opacity="0.85" />
+            <ellipse cx="170" cy="548" rx="2" ry="24" fill="#ffffff" opacity="0.85" />
+          </g>
+
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- MOTOR DO SITE REAL EM FLUTTER (Carrega por baixo da animação) -->
   <script src="flutter_bootstrap.js" async></script>
+
+  <!-- SCRIPT DE SINCRONIZAÇÃO COM O PRIMEIRO FRAME DO FLUTTER -->
+  <script>
+    const splashOverlay = document.getElementById('splashOverlay');
+
+    let flutterReady = false;
+    let minTimePassed = false;
+    let closingStarted = false;
+
+    function tryCloseSplash() {
+      if (flutterReady && minTimePassed && !closingStarted) {
+        closingStarted = true;
+        splashOverlay.classList.add('fade-out');
+      }
+    }
+
+    // 1. Ouve o evento oficial do Flutter quando a primeira tela real aparece por baixo
+    window.addEventListener('flutter-first-frame', () => {
+      flutterReady = true;
+      tryCloseSplash();
+    });
+
+    // 2. Garante pelo menos 3.8s para a logo abrir e ser exibida por 2 segundos completos
+    setTimeout(() => {
+      minTimePassed = true;
+      tryCloseSplash();
+    }, 3800);
+
+    // 3. Fallback de segurança (caso o evento falhe em algum navegador antigo, fecha após 8s)
+    setTimeout(() => {
+      if (!closingStarted) {
+        flutterReady = true;
+        minTimePassed = true;
+        tryCloseSplash();
+      }
+    }, 8000);
+
+    // 4. Remove o overlay da DOM após o fade-out para liberar os cliques na página
+    splashOverlay.addEventListener('animationend', (e) => {
+      if (e.animationName === 'seqOverlayFade') {
+        splashOverlay.remove();
+      }
+    });
+  </script>
 </body>
 </html>
