@@ -7,14 +7,20 @@ void main() {
 }
 
 class AppColors {
-  static const Color primaryRed = Color(0xFFC81D25);
-  static const Color deepNavy = Color(0xFF142864);
-  static const Color backgroundDark = Color(0xFF0B0F19);
-  static const Color surfaceDark = Color(0xFF131A29);
-  static const Color surfaceElevated = Color(0xFF1A2336);
-  static const Color textPrimary = Color(0xFFF8FAFC);
-  static const Color textSecondary = Color(0xFFA0AAB8);
-  static const Color borderDark = Color(0xFF232E47);
+  // Paleta Principal (Extraída do Logo)
+  static const Color primaryRed = Color(0xFFC82333); // Vermelho Intenso
+  static const Color deepNavy = Color(0xFF1E2E7A); // Azul Marinho
+  static const Color metallicGray = Color(0xFF9EA3A8); // Cinza Metálico
+  static const Color pureWhite = Color(0xFFFFFFFF); // Branco Puro
+
+  // Cores Complementares
+  static const Color lightGrayBg = Color(0xFFF4F6F9); // Cinza Muito Claro
+  static const Color darkGraphite = Color(0xFF1A1D24); // Grafite Escuro
+  static const Color softLightBlue = Color(0xFFE8EEF7); // Azul Claro Suave
+  static const Color textMuted = Color(0xFF525866); // Texto secundário legível
+  static const Color borderLight = Color(0xFFDDE2EB); // Bordas sutis
+
+  // Redes Sociais
   static const Color whatsappGreen = Color(0xFF25D366);
   static const Color instagramPink = Color(0xFFE1306C);
 }
@@ -28,13 +34,13 @@ class WorldFitnessApp extends StatelessWidget {
       title: 'Academia World Fitness',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: AppColors.backgroundDark,
-        primaryColor: AppColors.primaryRed,
-        colorScheme: const ColorScheme.dark(
-          primary: AppColors.primaryRed,
-          secondary: AppColors.deepNavy,
-          surface: AppColors.surfaceDark,
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: AppColors.pureWhite,
+        primaryColor: AppColors.deepNavy,
+        colorScheme: const ColorScheme.light(
+          primary: AppColors.deepNavy,
+          secondary: AppColors.primaryRed,
+          surface: AppColors.pureWhite,
         ),
         useMaterial3: true,
       ),
@@ -52,9 +58,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
-  final GlobalKey _estruturaKey = GlobalKey();
-  final GlobalKey _modalidadesKey = GlobalKey();
-  final GlobalKey _planoKey = GlobalKey();
+  final GlobalKey _inicioKey = GlobalKey();
   final GlobalKey _contatoKey = GlobalKey();
 
   static const String _whatsappUrl =
@@ -88,39 +92,46 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.backgroundDark.withValues(alpha: 0.92),
+        backgroundColor: AppColors.deepNavy,
         surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(color: AppColors.borderDark, height: 1),
-        ),
+        elevation: 2,
+        toolbarHeight: 72,
         title: Padding(
           padding: EdgeInsets.symmetric(horizontal: isDesktop ? 32 : 8),
           child: Row(
             children: [
+              // Container adaptado ao formato oval da logo1.png com fundo branco limpo
               Container(
+                width: 68,
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.borderDark, width: 1.5),
+                  color: AppColors.pureWhite,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: AppColors.metallicGray, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                child: ClipOval(
-                  child: Image.asset(
+                child: Image.asset(
+                  'assets/images/logo1.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
                     'assets/images/logo.png',
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 40,
-                      height: 40,
+                    fit: BoxFit.contain,
+                    errorBuilder: (ctx, err, st) => const Icon(
+                      Icons.fitness_center,
                       color: AppColors.deepNavy,
-                      child: const Icon(Icons.fitness_center,
-                          color: Colors.white, size: 20),
+                      size: 22,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               RichText(
                 text: const TextSpan(
                   style: TextStyle(
@@ -131,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     TextSpan(
                       text: 'WORLD ',
-                      style: TextStyle(color: AppColors.textPrimary),
+                      style: TextStyle(color: AppColors.pureWhite),
                     ),
                     TextSpan(
                       text: 'FITNESS',
@@ -146,16 +157,8 @@ class _HomePageState extends State<HomePage> {
         actions: isDesktop
             ? [
                 _NavButton(
-                  title: 'Estrutura',
-                  onTap: () => _scrollToSection(_estruturaKey),
-                ),
-                _NavButton(
-                  title: 'Modalidades',
-                  onTap: () => _scrollToSection(_modalidadesKey),
-                ),
-                _NavButton(
-                  title: 'Mensalidade',
-                  onTap: () => _scrollToSection(_planoKey),
+                  title: 'Início',
+                  onTap: () => _scrollToSection(_inicioKey),
                 ),
                 _NavButton(
                   title: 'Contato',
@@ -167,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.whatsappGreen,
-                      foregroundColor: Colors.white,
+                      foregroundColor: AppColors.pureWhite,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 18, vertical: 12),
@@ -190,280 +193,23 @@ class _HomePageState extends State<HomePage> {
         controller: _scrollController,
         child: Column(
           children: [
-            _HeroSection(
-              isDesktop: isDesktop,
-              onWhatsAppTap: () => _openUrl(_whatsappUrl),
-              onExploreTap: () => _scrollToSection(_estruturaKey),
-            ),
-
             Container(
-              key: _estruturaKey,
-              width: double.infinity,
-              color: AppColors.surfaceDark.withValues(alpha: 0.65),
-              padding: const EdgeInsets.symmetric(vertical: 72, horizontal: 24),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1100),
-                  child: Column(
-                    children: [
-                      const _SectionHeader(
-                        subtitle: 'CONHEÇA O AMBIENTE',
-                        title: 'Nossa Estrutura',
-                        description:
-                            'Um espaço pensado para o seu conforto, bem-estar e evolução diária.',
-                      ),
-                      const SizedBox(height: 48),
-                      Wrap(
-                        spacing: 24,
-                        runSpacing: 24,
-                        alignment: WrapAlignment.center,
-                        children: const [
-                          _PhotoSlotCard(
-                            label: 'ft1',
-                            caption: 'Área de Musculação',
-                            imagePath: 'assets/images/ft1.jpg',
-                          ),
-                          _PhotoSlotCard(
-                            label: 'ft2',
-                            caption: 'Equipamentos Modernos',
-                            imagePath: 'assets/images/ft2.jpg',
-                          ),
-                          _PhotoSlotCard(
-                            label: 'ft3',
-                            caption: 'Espaço Cardio & Funcional',
-                            imagePath: 'assets/images/ft3.jpg',
-                          ),
-                          _PhotoSlotCard(
-                            label: 'ft4',
-                            caption: 'Ambiente Climatizado e Amplo',
-                            imagePath: 'assets/images/ft4.jpg',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+              key: _inicioKey,
+              child: _HeroSection(
+                isDesktop: isDesktop,
+                onWhatsAppTap: () => _openUrl(_whatsappUrl),
+                onContactTap: () => _scrollToSection(_contatoKey),
               ),
             ),
 
-            Container(
-              key: _modalidadesKey,
-              width: double.infinity,
-              color: AppColors.backgroundDark,
-              padding: const EdgeInsets.symmetric(vertical: 72, horizontal: 24),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1100),
-                  child: Column(
-                    children: [
-                      const _SectionHeader(
-                        subtitle: 'O QUE OFERECEMOS',
-                        title: 'Modalidades e Acompanhamento',
-                        description:
-                            'Treinos completos para todos os objetivos, do iniciante ao avançado.',
-                      ),
-                      const SizedBox(height: 48),
-                      Wrap(
-                        spacing: 24,
-                        runSpacing: 24,
-                        alignment: WrapAlignment.center,
-                        children: const [
-                          _ModalityCard(
-                            icon: Icons.fitness_center_rounded,
-                            title: 'Musculação',
-                            description:
-                                'Aparelhos completos e pesos livres para hipertrofia, força e definição.',
-                          ),
-                          _ModalityCard(
-                            icon: Icons.directions_run_rounded,
-                            title: 'Cardio & Condicionamento',
-                            description:
-                                'Esteiras e equipamentos aeróbicos para melhorar sua resistência e saúde.',
-                          ),
-                          _ModalityCard(
-                            icon: Icons.assignment_turned_in_outlined,
-                            title: 'Ficha Personalizada',
-                            description:
-                                'Instrutores atenciosos para montar seu treino de acordo com seus objetivos.',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            Container(
-              key: _planoKey,
-              width: double.infinity,
-              color: AppColors.surfaceDark.withValues(alpha: 0.4),
-              padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1100),
-                  child: Column(
-                    children: [
-                      const _SectionHeader(
-                        subtitle: 'TRANSPARÊNCIA E SIMPLICIDADE',
-                        title: 'Valor da Mensalidade',
-                        description:
-                            'Sem taxas escondidas ou burocracia. Um plano único com acesso completo.',
-                      ),
-                      const SizedBox(height: 48),
-                      Container(
-                        width: 420,
-                        padding: const EdgeInsets.all(36),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              AppColors.surfaceElevated,
-                              AppColors.surfaceDark,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: AppColors.deepNavy,
-                            width: 1.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.deepNavy.withValues(alpha: 0.25),
-                              blurRadius: 30,
-                              offset: const Offset(0, 12),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryRed.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: AppColors.primaryRed.withValues(alpha: 0.4),
-                                ),
-                              ),
-                              child: const Text(
-                                'PLANO ÚNICO • ACESSO LIVRE',
-                                style: TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 24),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Padding(
-                                  padding: EdgeInsets.only(top: 8, right: 4),
-                                  child: Text(
-                                    'R\$',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  '80',
-                                  style: TextStyle(
-                                    fontSize: 64,
-                                    fontWeight: FontWeight.w900,
-                                    height: 1,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 8, left: 2),
-                                  child: Text(
-                                    ',00',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            const Text(
-                              'por mês',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const SizedBox(height: 28),
-                            const Divider(color: AppColors.borderDark),
-                            const SizedBox(height: 24),
-                            const _BenefitItem(
-                                text: 'Acesso livre a toda a academia'),
-                            const _BenefitItem(
-                                text: 'Acompanhamento de instrutores'),
-                            const _BenefitItem(
-                                text: 'Montagem de treino personalizada'),
-                            const _BenefitItem(
-                                text: 'Sem fidelidade ou multas'),
-                            const SizedBox(height: 20),
-                            Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: AppColors.backgroundDark.withValues(alpha: 0.7),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppColors.borderDark),
-                              ),
-                              child: const Row(
-                                children: [
-                                  Icon(Icons.info_outline,
-                                      size: 20, color: AppColors.textSecondary),
-                                  SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(
-                                      'Matrícula realizada diretamente na recepção da academia.',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: AppColors.textSecondary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
+            // Rodapé / Contato (Azul Marinho #1E2E7A)
             Container(
               key: _contatoKey,
               width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.backgroundDark,
-                    AppColors.deepNavy.withValues(alpha: 0.45),
-                  ],
-                ),
-                border: const Border(
-                  top: BorderSide(color: AppColors.borderDark, width: 1),
+              decoration: const BoxDecoration(
+                color: AppColors.deepNavy,
+                border: Border(
+                  top: BorderSide(color: AppColors.metallicGray, width: 1.5),
                 ),
               ),
               padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
@@ -472,45 +218,56 @@ class _HomePageState extends State<HomePage> {
                   constraints: const BoxConstraints(maxWidth: 900),
                   child: Column(
                     children: [
+                      // Logo oval em destaque no rodapé com fundo branco limpo
                       Container(
+                        width: 126,
+                        height: 88,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
+                          color: AppColors.pureWhite,
+                          borderRadius: BorderRadius.circular(44),
                           border: Border.all(
-                              color: AppColors.borderDark, width: 2),
+                              color: AppColors.metallicGray, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.25),
+                              blurRadius: 16,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
                         ),
-                        child: ClipOval(
-                          child: Image.asset(
+                        child: Image.asset(
+                          'assets/images/logo1.png',
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Image.asset(
                             'assets/images/logo.png',
-                            width: 68,
-                            height: 68,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Container(
-                              width: 68,
-                              height: 68,
+                            fit: BoxFit.contain,
+                            errorBuilder: (ctx, err, st) => const Icon(
+                              Icons.fitness_center,
                               color: AppColors.deepNavy,
-                              child: const Icon(Icons.fitness_center,
-                                  color: Colors.white, size: 30),
+                              size: 36,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 18),
                       const Text(
                         'ACADEMIA WORLD FITNESS',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.textPrimary,
+                          color: AppColors.pureWhite,
                           letterSpacing: 1.2,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'Segunda a Sexta: 05h30 às 22h00  •  Sábado: 08h00 às 14h00',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: AppColors.textSecondary,
+                          color: AppColors.pureWhite.withValues(alpha: 0.85),
                           fontSize: 15,
                         ),
                       ),
@@ -523,7 +280,7 @@ class _HomePageState extends State<HomePage> {
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.whatsappGreen,
-                              foregroundColor: Colors.white,
+                              foregroundColor: AppColors.pureWhite,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 24, vertical: 16),
@@ -543,10 +300,10 @@ class _HomePageState extends State<HomePage> {
                           ),
                           OutlinedButton.icon(
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.textPrimary,
-                              backgroundColor: AppColors.surfaceDark,
+                              foregroundColor: AppColors.deepNavy,
+                              backgroundColor: AppColors.pureWhite,
                               side: const BorderSide(
-                                  color: AppColors.borderDark, width: 1.5),
+                                  color: AppColors.metallicGray, width: 1.5),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 24, vertical: 16),
                               shape: RoundedRectangleBorder(
@@ -567,12 +324,14 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                       const SizedBox(height: 48),
-                      const Divider(color: AppColors.borderDark),
+                      Divider(
+                        color: AppColors.pureWhite.withValues(alpha: 0.2),
+                      ),
                       const SizedBox(height: 20),
-                      const Text(
+                      Text(
                         '© 2026 Academia World Fitness. Todos os direitos reservados.',
                         style: TextStyle(
-                          color: AppColors.textSecondary,
+                          color: AppColors.pureWhite.withValues(alpha: 0.75),
                           fontSize: 13,
                         ),
                       ),
@@ -599,7 +358,7 @@ class _NavButton extends StatelessWidget {
     return TextButton(
       onPressed: onTap,
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.textPrimary,
+        foregroundColor: AppColors.pureWhite,
         padding: const EdgeInsets.symmetric(horizontal: 16),
       ),
       child: Text(
@@ -616,12 +375,12 @@ class _NavButton extends StatelessWidget {
 class _HeroSection extends StatelessWidget {
   final bool isDesktop;
   final VoidCallback onWhatsAppTap;
-  final VoidCallback onExploreTap;
+  final VoidCallback onContactTap;
 
   const _HeroSection({
     required this.isDesktop,
     required this.onWhatsAppTap,
-    required this.onExploreTap,
+    required this.onContactTap,
   });
 
   @override
@@ -629,16 +388,16 @@ class _HeroSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: RadialGradient(
-          center: const Alignment(0.6, -0.2),
-          radius: 1.2,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
-            AppColors.deepNavy.withValues(alpha: 0.45),
-            AppColors.backgroundDark,
+            AppColors.pureWhite,
+            AppColors.softLightBlue.withValues(alpha: 0.65),
           ],
         ),
         border: const Border(
-          bottom: BorderSide(color: AppColors.borderDark, width: 1),
+          bottom: BorderSide(color: AppColors.borderLight, width: 1),
         ),
       ),
       padding: EdgeInsets.symmetric(
@@ -664,7 +423,7 @@ class _HeroSection extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryRed.withValues(alpha: 0.15),
+                        color: AppColors.primaryRed.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
                           color: AppColors.primaryRed.withValues(alpha: 0.35),
@@ -673,7 +432,7 @@ class _HeroSection extends StatelessWidget {
                       child: const Text(
                         'SAÚDE • BEM-ESTAR • RESULTADOS',
                         style: TextStyle(
-                          color: AppColors.textPrimary,
+                          color: AppColors.primaryRed,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                           letterSpacing: 1,
@@ -688,7 +447,7 @@ class _HeroSection extends StatelessWidget {
                         fontSize: isDesktop ? 46 : 34,
                         fontWeight: FontWeight.w900,
                         height: 1.15,
-                        color: AppColors.textPrimary,
+                        color: AppColors.deepNavy,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -698,7 +457,7 @@ class _HeroSection extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 17,
                         height: 1.6,
-                        color: AppColors.textSecondary,
+                        color: AppColors.darkGraphite,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -712,8 +471,10 @@ class _HeroSection extends StatelessWidget {
                         ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryRed,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
+                            foregroundColor: AppColors.pureWhite,
+                            elevation: 2,
+                            shadowColor:
+                                AppColors.primaryRed.withValues(alpha: 0.35),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 28, vertical: 18),
                             shape: RoundedRectangleBorder(
@@ -732,22 +493,22 @@ class _HeroSection extends StatelessWidget {
                         ),
                         OutlinedButton(
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.textPrimary,
-                            backgroundColor: AppColors.surfaceDark.withValues(alpha: 0.6),
+                            foregroundColor: AppColors.deepNavy,
+                            backgroundColor: AppColors.pureWhite,
                             side: const BorderSide(
-                                color: AppColors.borderDark, width: 1.5),
+                                color: AppColors.deepNavy, width: 1.5),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 28, vertical: 18),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: onExploreTap,
+                          onPressed: onContactTap,
                           child: const Text(
-                            'Conhecer o Espaço',
+                            'Horários e Contato',
                             style: TextStyle(
                               fontSize: 15,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
@@ -756,20 +517,23 @@ class _HeroSection extends StatelessWidget {
                   ],
                 ),
               ),
-              if (isDesktop) const SizedBox(width: 48) else const SizedBox(height: 40),
+              if (isDesktop)
+                const SizedBox(width: 48)
+              else
+                const SizedBox(height: 40),
               Expanded(
                 flex: isDesktop ? 5 : 0,
                 child: Container(
                   height: 360,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceDark,
+                    color: AppColors.pureWhite,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: AppColors.borderDark, width: 1.5),
+                    border: Border.all(color: AppColors.deepNavy, width: 1.5),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.deepNavy.withValues(alpha: 0.25),
-                        blurRadius: 30,
+                        color: AppColors.deepNavy.withValues(alpha: 0.14),
+                        blurRadius: 28,
                         offset: const Offset(0, 10),
                       ),
                     ],
@@ -785,52 +549,52 @@ class _HeroSection extends StatelessWidget {
                           height: double.infinity,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: AppColors.textPrimary, width: 2),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.primaryRed
-                                            .withValues(alpha: 0.35),
-                                        blurRadius: 28,
-                                        offset: const Offset(0, 6),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipOval(
-                                    child: Image.asset(
-                                      'assets/images/logo.png',
-                                      width: 150,
-                                      height: 150,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (ctx, err, st) => Container(
-                                        width: 150,
-                                        height: 150,
-                                        color: AppColors.deepNavy,
-                                        child: const Icon(
-                                          Icons.fitness_center,
-                                          color: Colors.white,
-                                          size: 60,
+                            return Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              color: AppColors.pureWhite,
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  // Exibição fiel da logo1.png em formato oval sem cortes
+                                  Expanded(
+                                    child: Center(
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 280,
+                                          maxHeight: 210,
+                                        ),
+                                        child: Image.asset(
+                                          'assets/images/logo1.png',
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (ctx, err, st) =>
+                                              Image.asset(
+                                            'assets/images/logo.png',
+                                            fit: BoxFit.contain,
+                                            errorBuilder: (c, e, s) =>
+                                                const Icon(
+                                              Icons.fitness_center,
+                                              color: AppColors.deepNavy,
+                                              size: 72,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 18),
-                                const Text(
-                                  'ACADEMIA WORLD FITNESS',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    color: AppColors.textPrimary,
-                                    letterSpacing: 1.4,
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    'ACADEMIA WORLD FITNESS',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.deepNavy,
+                                      letterSpacing: 1.4,
+                                      fontSize: 15,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             );
                           },
                         ),
@@ -878,7 +642,7 @@ class _SectionHeader extends StatelessWidget {
           style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.w900,
-            color: AppColors.textPrimary,
+            color: AppColors.deepNavy,
           ),
         ),
         const SizedBox(height: 12),
@@ -889,7 +653,7 @@ class _SectionHeader extends StatelessWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 16,
-              color: AppColors.textSecondary,
+              color: AppColors.darkGraphite,
               height: 1.5,
             ),
           ),
@@ -915,13 +679,15 @@ class _PhotoSlotCard extends StatelessWidget {
     return Container(
       width: 250,
       decoration: BoxDecoration(
-        color: AppColors.surfaceDark,
+        color: AppColors.pureWhite,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.borderDark),
+        border: Border.all(
+          color: AppColors.metallicGray.withValues(alpha: 0.6),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 12,
+            color: AppColors.deepNavy.withValues(alpha: 0.08),
+            blurRadius: 14,
             offset: const Offset(0, 4),
           ),
         ],
@@ -939,20 +705,23 @@ class _PhotoSlotCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    color: AppColors.surfaceElevated,
+                    color: AppColors.softLightBlue,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
-                            color: AppColors.surfaceDark,
+                            color: AppColors.pureWhite,
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.borderDark),
+                            border: Border.all(
+                              color:
+                                  AppColors.metallicGray.withValues(alpha: 0.6),
+                            ),
                           ),
                           child: const Icon(
                             Icons.add_a_photo_outlined,
-                            color: AppColors.textPrimary,
+                            color: AppColors.deepNavy,
                             size: 28,
                           ),
                         ),
@@ -961,10 +730,10 @@ class _PhotoSlotCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 3),
                           decoration: BoxDecoration(
-                            color: AppColors.deepNavy.withValues(alpha: 0.5),
+                            color: AppColors.pureWhite,
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(
-                              color: AppColors.borderDark,
+                              color: AppColors.deepNavy.withValues(alpha: 0.25),
                             ),
                           ),
                           child: Text(
@@ -972,7 +741,7 @@ class _PhotoSlotCard extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: AppColors.deepNavy,
                               letterSpacing: 1,
                             ),
                           ),
@@ -997,7 +766,7 @@ class _PhotoSlotCard extends StatelessWidget {
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
-                      color: AppColors.textPrimary,
+                      color: AppColors.deepNavy,
                     ),
                   ),
                 ),
@@ -1027,9 +796,18 @@ class _ModalityCard extends StatelessWidget {
       width: 330,
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: AppColors.surfaceDark,
+        color: AppColors.lightGrayBg,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.borderDark),
+        border: Border.all(
+          color: AppColors.metallicGray.withValues(alpha: 0.55),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.deepNavy.withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1037,7 +815,7 @@ class _ModalityCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.primaryRed.withValues(alpha: 0.14),
+              color: AppColors.primaryRed.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: AppColors.primaryRed.withValues(alpha: 0.3),
@@ -1051,14 +829,14 @@ class _ModalityCard extends StatelessWidget {
             style: const TextStyle(
               fontSize: 19,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: AppColors.deepNavy,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             description,
             style: const TextStyle(
-              color: AppColors.textSecondary,
+              color: AppColors.darkGraphite,
               height: 1.5,
               fontSize: 15,
             ),
@@ -1090,7 +868,7 @@ class _BenefitItem extends StatelessWidget {
             child: Text(
               text,
               style: const TextStyle(
-                color: AppColors.textPrimary,
+                color: AppColors.darkGraphite,
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
               ),
